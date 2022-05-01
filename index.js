@@ -29,6 +29,12 @@ async function run() {
             const fruit = await collections.findOne(query)
             res.send(fruit)
         })
+
+        app.post('/fruits', async (req, res) => {
+            const data = req.body
+            const result =await collections.insertOne(data)
+            res.send(result)
+        })
     }
    
     finally {
