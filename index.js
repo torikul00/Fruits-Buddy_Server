@@ -5,6 +5,7 @@ const app = express()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 
+// middle ware
 app.use(cors())
 app.use(express.json())
 
@@ -44,6 +45,28 @@ async function run() {
             const query = {_id:ObjectId(id)}
             const result = await collections.deleteOne(query)
             res.send(result)
+        })
+        // update item
+        app.put('/fruit/:id', async (req,res)=>{
+            const id = req.params.id
+            const updateQuantity = req.body
+            const  filter = {_id:ObjectId(id)}
+            const options = {upsert:true}
+            const updateDoc = {
+                $set: {
+                    quantity:updateQuantity.quantity
+                }
+            }
+            const result = await collections.updateOne(filter, updateDoc, options)
+            res.send(result)
+        })
+        // specific items api for specific users
+        app.get('/orderItems', async (req, res) => {
+            const email = req.query.email
+            const query = {email:email}
+            const cursor = collections.find(query)
+            const orders = await cursor.toArray()
+            res.send(orders)
         })
     }
    
